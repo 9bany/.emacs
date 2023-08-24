@@ -82,8 +82,8 @@
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 15)))
 
-(use-package doom-themes
-  :init (load-theme 'doom-dracula t))
+(load "~/.emacs.d/tokyo-city-theme.el")
+(load-theme 'tokyo-city t)
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
@@ -227,16 +227,8 @@
   ("s-p" . projectile-command-map)
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/Documents/9bany")
-    (setq projectile-project-search-path '("~/Documents/9bany")))
-  (setq projectile-switch-project-action #'projectile-dired)
 
-  (when (file-directory-p "~/Documents/theboxlab")
-    (setq projectile-project-search-path '("~/Documents/theboxlab")))
-  (setq projectile-switch-project-action #'projectile-dired)
-  
-  (when (file-directory-p "~/Documents/github")
-    (setq projectile-project-search-path '("~/Documents/github")))
+   (setq projectile-project-search-path '("~/Documents" "~/go/src/github.com"))
   (setq projectile-switch-project-action #'projectile-dired))
 ;;(use-package counsel-projectile
 ;; :config (counsel-projectile-mode))
