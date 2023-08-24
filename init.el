@@ -12,6 +12,8 @@
 
 ;; Set up the visible bell
 (setq visible-bell t)
+;; stop creating ~ files
+(setq make-backup-files nil)
 
 (set-face-attribute 'default nil :font "Monaco NFM" :height runemacs/default-font-size)
 
@@ -216,6 +218,26 @@
          (before-save . lsp-organize-imports)))
 
 (provide 'gopls-config)
+;; funcs
+
+(defun nolinum ()
+  (global-display-line-numbers-mode 0)
+  )
+(defun linum ()
+  (global-display-line-numbers-mode 1)
+  )
+;; ================= writeroom config ===================
+(global-set-key (kbd "s-r") 'writeroom-mode)
+(use-package writeroom-mode
+  :custom (
+	 (writeroom-mode-disable-hook 'linum)
+	 (writeroom-mode-enable-hook 'nolinum)
+	   (writeroom-fullscreen-effect 'maximized))
+  )
+(with-eval-after-load 'writeroom-mode
+  (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
+  (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
+  (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width))
 
 ;; =============== Projectile configuration =====================
  ;; :config (projectile-mode)
@@ -248,7 +270,7 @@
  ;; If there is more than one, they won't work right.
  '(helm-minibuffer-history-key "M-p")
  '(package-selected-packages
-   '(company-box company typescript-mode dap-mode lsp-treemacs lsp-ivy helm-lsp lsp-ui lsp-mode ibuffer-projectile go-mode rg forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters doom-themes doom-modeline all-the-icons ivy command-log-mode use-package)))
+   '(writeroom-mode company-box company typescript-mode dap-mode lsp-treemacs lsp-ivy helm-lsp lsp-ui lsp-mode ibuffer-projectile go-mode rg forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters doom-themes doom-modeline all-the-icons ivy command-log-mode use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
