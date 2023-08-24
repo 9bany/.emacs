@@ -218,6 +218,9 @@
          (before-save . lsp-organize-imports)))
 
 (provide 'gopls-config)
+
+(ac-config-default)
+
 ;; funcs
 
 (defun nolinum ()
@@ -270,7 +273,7 @@
  ;; If there is more than one, they won't work right.
  '(helm-minibuffer-history-key "M-p")
  '(package-selected-packages
-   '(writeroom-mode company-box company typescript-mode dap-mode lsp-treemacs lsp-ivy helm-lsp lsp-ui lsp-mode ibuffer-projectile go-mode rg forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters doom-themes doom-modeline all-the-icons ivy command-log-mode use-package)))
+   '(auto-complete writeroom-mode company-box company typescript-mode dap-mode lsp-treemacs lsp-ivy helm-lsp lsp-ui lsp-mode ibuffer-projectile go-mode rg forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters doom-themes doom-modeline all-the-icons ivy command-log-mode use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
