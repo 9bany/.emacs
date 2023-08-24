@@ -228,7 +228,7 @@
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
 
-   (setq projectile-project-search-path '("~/Documents" "~/go/src/github.com"))
+  (setq projectile-project-search-path '("~/Documents" "~/.emacs.d" "~/go/src/github.com" "~/go/src/github.com/theboxlab"))
   (setq projectile-switch-project-action #'projectile-dired))
 ;;(use-package counsel-projectile
 ;; :config (counsel-projectile-mode))
