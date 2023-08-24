@@ -24,6 +24,9 @@
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
+(use-package ace-window
+  :bind ("M-o" . ace-window))
+
 ;; Initialize package sources
 (require 'package)
 
@@ -44,6 +47,10 @@
 
 (column-number-mode)
 (global-display-line-numbers-mode t)
+
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "GOPATH"))
 
 ;; ============== hide bell ===========
 (setq visible-bell nil) 
@@ -148,7 +155,7 @@
   (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
   (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
+)
 
 (use-package evil-collection
   :after evil
@@ -224,9 +231,6 @@
 
 (provide 'gopls-config)
 
-(ac-config-default)
-
-
 (use-package flycheck
   :hook (prog-mode . flycheck-mode)
   :demand t
@@ -250,12 +254,10 @@
 (use-package yasnippet
   :ensure t)
 
-(add-to-list 'load-path "~/.emacs.d/go/go-guru.el")
 (require 'go-guru)
-(add-to-list 'load-path "~/.emacs.d/go/go-rename.el")
 (require 'go-rename)
 
-(defun my-go-mode-hook ()
+(defun go-hook ()
   (add-hook 'before-save-hook 'gofmt-before-save) ; gofmt before every save
   (setq gofmt-command "goimports")                ; gofmt uses invokes goimports
   (if (not (string-match "go" compile-command))   ; set compile command default
@@ -282,7 +284,7 @@
   ;; Misc go stuff
   (auto-complete-mode 1))                         ; Enable auto-complete mode
 
-(add-hook 'go-mode-hook 'my-go-mode-hook)
+(add-hook 'go-mode-hook 'go-hook)
 
 ;; Ensure the go specific autocomplete is active in go-mode.
 (with-eval-after-load 'go-mode
@@ -347,7 +349,7 @@
  ;; If there is more than one, they won't work right.
  '(helm-minibuffer-history-key "M-p")
  '(package-selected-packages
-   '(go-eldoc flycheck-gometalinter flycheck auto-complete writeroom-mode company-box company typescript-mode dap-mode lsp-treemacs lsp-ivy helm-lsp lsp-ui lsp-mode ibuffer-projectile go-mode rg forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters doom-themes doom-modeline all-the-icons ivy command-log-mode use-package)))
+   '(exec-path-from-shell go-autocomplete go-eldoc flycheck-gometalinter flycheck auto-complete writeroom-mode company-box company typescript-mode dap-mode lsp-treemacs lsp-ivy helm-lsp lsp-ui lsp-mode ibuffer-projectile go-mode rg forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters doom-themes doom-modeline all-the-icons ivy command-log-mode use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
