@@ -160,17 +160,26 @@
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 ;; =============== Projectile configuration =====================
+ ;; :config (projectile-mode)
 (use-package projectile
   :diminish projectile-mode
   :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
   :bind-keymap
   ("s-p" . projectile-command-map)
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/")
-    (setq projectile-project-search-path '("~/Documents/github", "~/Documents/9bany", "~/Documents/theboxlab", "~/.emacs.d")))
-  (setq projectile-switch-project-action #'projectile-dired))
+  (when (file-directory-p "~/Documents/9bany")
+    (setq projectile-project-search-path '("~/Documents/9bany")))
+  (setq projectile-switch-project-action #'projectile-dired)
 
+  (when (file-directory-p "~/Documents/theboxlab")
+    (setq projectile-project-search-path '("~/Documents/theboxlab")))
+  (setq projectile-switch-project-action #'projectile-dired)
+  
+  (when (file-directory-p "~/Documents/github")
+    (setq projectile-project-search-path '("~/Documents/github")))
+  (setq projectile-switch-project-action #'projectile-dired))
 ;;(use-package counsel-projectile
 ;; :config (counsel-projectile-mode))
 
@@ -188,7 +197,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(rg forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters doom-themes doom-modeline all-the-icons ivy command-log-mode use-package)))
+   '(ibuffer-projectile go-mode rg forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters doom-themes doom-modeline all-the-icons ivy command-log-mode use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
