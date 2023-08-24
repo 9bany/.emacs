@@ -39,6 +39,9 @@
 (column-number-mode)
 (global-display-line-numbers-mode t)
 
+;; ============== hide bell ===========
+(setq visible-bell nil) 
+
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
                 term-mode-hook
@@ -157,10 +160,16 @@
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 ;; =============== Projectile configuration =====================
-(define-key projectile-mode-map (kbd "s-p") 'projectile-command-map)
-(setq projectile-project-search-path '("~/Documents/github", "~/Documents/9bany", "~/Documents/theboxlab", "~/.emacs.d"))
-(setq projectile-switch-project-action #'projectile-dired)
-(setq projectile-completion-system 'ivy)
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :bind-keymap
+  ("s-p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "~/")
+    (setq projectile-project-search-path '("~/Documents/github", "~/Documents/9bany", "~/Documents/theboxlab", "~/.emacs.d")))
+  (setq projectile-switch-project-action #'projectile-dired))
 
 ;;(use-package counsel-projectile
 ;; :config (counsel-projectile-mode))

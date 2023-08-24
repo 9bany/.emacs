@@ -163,8 +163,8 @@
   ("s-p" . projectile-command-map)
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/Documents")
-    (setq projectile-project-search-path '("~/Documents/github", "~/Documents/9bany", "~/Documents/theboxlab")))
+  (when (file-directory-p "~/")
+    (setq projectile-project-search-path '("~/Documents/github", "~/Documents/9bany", "~/Documents/theboxlab", "~/.emacs.d")))
   (setq projectile-switch-project-action #'projectile-dired))
 
 (use-package counsel-projectile
