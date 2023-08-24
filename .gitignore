@@ -1,0 +1,8 @@
+*~
+*.eld
+projects
+recentf
+elpa/
+auto-save-list
+*.sqlite
+transient
