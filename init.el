@@ -20,7 +20,6 @@
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 (set-face-attribute 'default nil :font "Monaco NFM" :height runemacs/default-font-size)
-
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -52,9 +51,36 @@
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-env "GOPATH"))
 
+;; Util ====================
+
+(let ((timeout 0.05)
+      (timers-alist nil))
+  (cl-flet* ((get-timer (key)
+                        (cdr (assoc key timers-alist)))
+              (set-timer (key timer)
+                        (push (cons key timer) timers-alist))
+              (drop-timer (key)
+                          (setq timers-alist (assoc-delete-all key timers-alist)))
+              (save-buffer-and-drop-timer (buffer)
+                                          (with-current-buffer buffer
+                                            (progn
+                                              (save-buffer)
+                                              (drop-timer buffer))))
+              (save-buffer-deffered (buffer)
+                                    (unless (get-timer buffer)
+                                      (set-timer buffer
+                                                (run-with-idle-timer timeout
+                                                                      nil
+                                                                      #'save-buffer-and-drop-timer
+                                                                      buffer)))))
+    (defun save-file-buffer-deffered (&rest args)
+      (if (buffer-file-name)
+          (save-buffer-deffered (current-buffer))))))
+
+(add-hook 'after-change-functions 'save-file-buffer-deffered)
+
 ;; ============== hide bell ===========
 (setq visible-bell nil) 
-
 
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
@@ -309,14 +335,14 @@
 (global-set-key (kbd "s-r") 'writeroom-mode)
 (use-package writeroom-mode
   :custom (
-	 (writeroom-mode-disable-hook 'linum)
-	 (writeroom-mode-enable-hook 'nolinum)
+	   (writeroom-mode-disable-hook 'linum)
+	   (writeroom-mode-enable-hook 'nolinum)
 	   (writeroom-fullscreen-effect 'maximized))
   )
 (with-eval-after-load 'writeroom-mode
-  (define-key writeroom-mode-map (kbd "C-M-<") #'writeroom-decrease-width)
-  (define-key writeroom-mode-map (kbd "C-M->") #'writeroom-increase-width)
-  (define-key writeroom-mode-map (kbd "C-M-=") #'writeroom-adjust-width))
+  (define-key writeroom-mode-map (kbd "M-s-<left>") #'writeroom-decrease-width)
+  (define-key writeroom-mode-map (kbd "M-s-<right>") #'writeroom-increase-width)
+  (define-key writeroom-mode-map (kbd "M-s-=") #'writeroom-adjust-width))
 
 ;; =============== Projectile configuration =====================
  ;; :config (projectile-mode)
@@ -329,7 +355,7 @@
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
 
-  (setq projectile-project-search-path '("~/Documents" "~/.emacs.d" "~/go/src/github.com" "~/go/src/github.com/theboxlab"))
+  (setq projectile-project-search-path '("~/Documents" "~/Documents/theboxlab" "~/Documents/9bany/dotfiles" "~/.emacs.d" "~/go/src/github.com" "~/go/src/github.com/theboxlab"))
   (setq projectile-switch-project-action #'projectile-dired))
 ;;(use-package counsel-projectile
 ;; :config (counsel-projectile-mode))
@@ -342,6 +368,135 @@
 ;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
 ;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
 (use-package forge)
+
+(defun efs/org-mode-setup ()
+  (org-indent-mode)
+  (variable-pitch-mode 1)
+  (visual-line-mode 1))
+
+;; Org Mode Configuration ------------------------------------------------------
+
+(defun efs/org-font-setup ()
+  ;; Replace list hyphen with dot
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+ ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+
+(use-package org
+  :hook (org-mode . efs/org-mode-setup)
+  :config
+  (setq org-ellipsis " ▾")
+
+  (setq org-agenda-start-with-log-mode t)
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+
+  (setq org-agenda-files
+	'("~/.emacs.d/org_files/tasks.org"))
+
+  (require 'org-habit)
+  (add-to-list 'org-modules 'org-habit)
+  (setq org-habit-graph-column 60)
+
+  (setq org-todo-keywords
+    '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+      (sequence "BACKLOG(b)" "PLAN(p)" "READY(r)" "ACTIVE(a)" "REVIEW(v)" "WAIT(w@/!)" "HOLD(h)" "|" "COMPLETED(c)" "CANC(k@)")))
+
+  (setq org-refile-targets
+    '(("Archive.org" :maxlevel . 1)
+      ("Tasks.org" :maxlevel . 1)))
+
+  ;; Save Org buffers after refiling!
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
+
+  (setq org-tag-alist
+    '((:startgroup)
+       ; Put mutually exclusive tags here
+       (:endgroup)
+       ("@errand" . ?E)
+       ("@home" . ?H)
+       ("@work" . ?W)
+       ("agenda" . ?a)
+       ("planning" . ?p)
+       ("publish" . ?P)
+       ("batch" . ?b)
+       ("note" . ?n)
+       ("idea" . ?i)))
+
+  ;; Configure custom agenda views
+  (setq org-agenda-custom-commands
+   '(("d" "Dashboard"
+     ((agenda "" ((org-deadline-warning-days 7)))
+      (todo "NEXT"
+        ((org-agenda-overriding-header "Next Tasks")))
+      (tags-todo "agenda/ACTIVE" ((org-agenda-overriding-header "Active Projects")))))
+
+    ("n" "Next Tasks"
+     ((todo "NEXT"
+        ((org-agenda-overriding-header "Next Tasks")))))
+
+    ("W" "Work Tasks" tags-todo "+work-email")
+
+    ;; Low-effort next actions
+    ("e" tags-todo "+TODO=\"NEXT\"+Effort<15&+Effort>0"
+     ((org-agenda-overriding-header "Low Effort Tasks")
+      (org-agenda-max-todos 20)
+      (org-agenda-files org-agenda-files)))
+
+    ("w" "Workflow Status"
+     ((todo "WAIT"
+            ((org-agenda-overriding-header "Waiting on External")
+             (org-agenda-files org-agenda-files)))
+      (todo "REVIEW"
+            ((org-agenda-overriding-header "In Review")
+             (org-agenda-files org-agenda-files)))
+      (todo "PLAN"
+            ((org-agenda-overriding-header "In Planning")
+             (org-agenda-todo-list-sublevels nil)
+             (org-agenda-files org-agenda-files)))
+      (todo "BACKLOG"
+            ((org-agenda-overriding-header "Project Backlog")
+             (org-agenda-todo-list-sublevels nil)
+             (org-agenda-files org-agenda-files)))
+      (todo "READY"
+            ((org-agenda-overriding-header "Ready for Work")
+             (org-agenda-files org-agenda-files)))
+      (todo "ACTIVE"
+            ((org-agenda-overriding-header "Active Projects")
+             (org-agenda-files org-agenda-files)))
+      (todo "COMPLETED"
+            ((org-agenda-overriding-header "Completed Projects")
+             (org-agenda-files org-agenda-files)))
+      (todo "CANC"
+            ((org-agenda-overriding-header "Cancelled Projects")
+             (org-agenda-files org-agenda-files)))))))
+  
+  (efs/org-font-setup))
+
+
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+(defun efs/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :hook (org-mode . efs/org-mode-visual-fill))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -349,7 +504,7 @@
  ;; If there is more than one, they won't work right.
  '(helm-minibuffer-history-key "M-p")
  '(package-selected-packages
-   '(exec-path-from-shell go-autocomplete go-eldoc flycheck-gometalinter flycheck auto-complete writeroom-mode company-box company typescript-mode dap-mode lsp-treemacs lsp-ivy helm-lsp lsp-ui lsp-mode ibuffer-projectile go-mode rg forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters doom-themes doom-modeline all-the-icons ivy command-log-mode use-package)))
+   '(org-bullets exec-path-from-shell go-autocomplete go-eldoc flycheck-gometalinter flycheck auto-complete writeroom-mode company-box company typescript-mode dap-mode lsp-treemacs lsp-ivy helm-lsp lsp-ui lsp-mode ibuffer-projectile go-mode rg forge evil-magit magit counsel-projectile projectile hydra evil-collection evil general helpful counsel ivy-rich which-key rainbow-delimiters doom-themes doom-modeline all-the-icons ivy command-log-mode use-package)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
