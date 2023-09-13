@@ -6,7 +6,7 @@
 (defvar efs/default-variable-font-size 180)
 
 ;; Make frame transparency overridable
-(defvar efs/frame-transparency '(90 . 90))
+;;(defvar efs/frame-transparency '(90 . 90))
 
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
@@ -74,8 +74,8 @@
 (global-display-line-numbers-mode t)
 
 ;; Set frame transparency
-(set-frame-parameter (selected-frame) 'alpha efs/frame-transparency)
-(add-to-list 'default-frame-alist `(alpha . ,efs/frame-transparency))
+;;(set-frame-parameter (selected-frame) 'alpha efs/frame-transparency)
+;;(add-to-list 'default-frame-alist `(alpha . ,efs/frame-transparency))
 (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
@@ -481,6 +481,32 @@ Young Fingaprint   ;; Replace list hyphen with dot
   :config
   (pyvenv-mode 1))
 
+(use-package go-mode
+  :init
+  (progn
+    (add-hook 'before-save-hook 'gofmt-before-save)
+    (setq compile-command "go build -v && go test -v  && go vet && golint")
+    (setq gofmt-command "goimports")
+    (local-set-key (kbd "M-.") 'godef-jump)))
+
+(use-package go-eldoc
+  :init
+  (progn
+    (go-eldoc-setup)))
+
+(use-package go-autocomplete
+  :require (auto-complete auto-complete-config)
+  :config
+  (progn
+    (ac-config-default)
+    (setq ac-auto-start 3)
+  ))
+
+(use-package golint
+  :init
+  (add-to-list 'load-path
+      (concat (getenv "GOPATH") "/src/github.com/golang/lint/misc/emacs")))
+
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
@@ -504,7 +530,8 @@ Young Fingaprint   ;; Replace list hyphen with dot
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
   (when (file-directory-p "~/Documents")
-    (setq projectile-project-search-path '("~/Documents")))
+    (setq projectile-project-search-path '("~/Documents" "~/go/src/github.com")))
+
   (setq projectile-switch-project-action #'projectile-dired))
 
 (use-package counsel-projectile
@@ -611,5 +638,22 @@ Young Fingaprint   ;; Replace list hyphen with dot
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
 
+(google-this-mode 1)
+
+(global-set-key (kbd "C-x g") 'google-this-mode-submap)
+
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(golint go-eldoc go-mode which-key vterm visual-fill-column use-package typescript-mode rainbow-delimiters pyvenv python-mode org-bullets no-littering lsp-ui lsp-ivy ivy-rich ivy-prescient helpful google-this general forge exwm evil-nerd-commenter evil-collection eterm-256color eshell-git-prompt doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles desktop-environment dap-mode counsel-projectile company-box command-log-mode auto-package-update all-the-icons-dired)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
