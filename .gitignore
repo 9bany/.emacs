@@ -7,3 +7,4 @@ auto-save-list
 *.sqlite
 transient
 .DS_Store
+var
