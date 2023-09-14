@@ -98,6 +98,11 @@
 (setq visible-bell nil
       ring-bell-function #'ignore)
 
+(global-set-key (kbd "s-r") 'writeroom-mode)
+(setq writeroom-fullscreen-effect 'maximized)
+
+(setq writeroom-mode-line t)
+
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
