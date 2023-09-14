@@ -799,7 +799,7 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
 
 #+end_src
 
-*** Golang Configuration
+*** Golang 
 ***** go-mode
 #+BEGIN_SRC emacs-lisp
   (use-package go-mode
