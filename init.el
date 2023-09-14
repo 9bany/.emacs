@@ -140,8 +140,9 @@
 (use-package command-log-mode
   :commands command-log-mode)
 
+;; list theme i'm using in my config: palenight, dracula
 (use-package doom-themes
-  :init (load-theme 'doom-palenight t))
+  :init (load-theme 'doom-dracula t))
 
 (use-package all-the-icons)
 
@@ -418,6 +419,18 @@ Young Fingaprint   ;; Replace list hyphen with dot
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
 
+(require 'go-autocomplete)
+(require 'auto-complete-config)
+(ac-config-default)
+
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "GOPATH"))
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
 (defun efs/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode))
@@ -489,23 +502,29 @@ Young Fingaprint   ;; Replace list hyphen with dot
     (setq gofmt-command "goimports")
     (local-set-key (kbd "M-.") 'godef-jump)))
 
-(use-package go-eldoc
-  :init
-  (progn
-    (go-eldoc-setup)))
+(defun my-go-mode-hook ()
+      (setq tab-width 2 indent-tabs-mode 1)
+      ; eldoc shows the signature of the function at point in the status bar.
+      (go-eldoc-setup)
+      (set (make-local-variable 'company-backends) '(company-go))
+      ; extra keybindings from https://github.com/bbatsov/prelude/blob/master/modules/prelude-go.el
+      (let ((map go-mode-map))
+        (define-key map (kbd "C-c a") 'go-test-current-project) ;; current package, really
+        (define-key map (kbd "C-c m") 'go-test-current-file)
+        (define-key map (kbd "C-c .") 'go-test-current-test)
+        (define-key map (kbd "C-c b") 'go-run)))
+(add-hook 'go-mode-hook 'my-go-mode-hook)
 
-(use-package go-autocomplete
-  :require (auto-complete auto-complete-config)
-  :config
-  (progn
-    (ac-config-default)
-    (setq ac-auto-start 3)
-  ))
-
-(use-package golint
-  :init
-  (add-to-list 'load-path
-      (concat (getenv "GOPATH") "/src/github.com/golang/lint/misc/emacs")))
+; gotest defines a better set of error regexps for go tests, but it only
+; enables them when using its own functions. Add them globally for use in
+(require 'compile)
+(require 'gotest)
+(dolist (elt go-test-compilation-error-regexp-alist-alist)
+  (add-to-list 'compilation-error-regexp-alist-alist elt))
+(defun prepend-go-compilation-regexps ()
+  (dolist (elt (reverse go-test-compilation-error-regexp-alist))
+    (add-to-list 'compilation-error-regexp-alist elt t)))
+(add-hook 'go-mode-hook 'prepend-go-compilation-regexps)
 
 (use-package company
   :after lsp-mode
@@ -637,10 +656,6 @@ Young Fingaprint   ;; Replace list hyphen with dot
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
-
-(google-this-mode 1)
-
-(global-set-key (kbd "C-x g") 'google-this-mode-submap)
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))

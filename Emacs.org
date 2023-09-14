@@ -235,8 +235,9 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+begin_src emacs-lisp
 
-(use-package doom-themes
-  :init (load-theme 'doom-palenight t))
+  ;; list theme i'm using in my config: palenight, dracula
+  (use-package doom-themes
+    :init (load-theme 'doom-dracula t))
 
 #+end_src
 
@@ -632,9 +633,26 @@ This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-con
 #+end_src
 
 * Development
+** Auto complete config
+#+begin_src emacs-lisp
+  (require 'go-autocomplete)
+  (require 'auto-complete-config)
+  (ac-config-default)
+#+end_src
+** Config for macOS
+#+begin_src emacs-lisp
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "GOPATH"))
+#+end_src
+** Flycheck
+#+begin_src emacs-lisp
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+#+end_src
 ** Languages
 *** IDE Features with lsp-mode
-
 **** lsp-mode
 
 We use the excellent [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] to enable IDE-like functionality for many different programming languages via "language servers" that speak the [[https://microsoft.github.io/language-server-protocol/][Language Server Protocol]].  Before trying to set up =lsp-mode= for a particular language, check out the [[https://emacs-lsp.github.io/lsp-mode/page/languages/][documentation for your language]] so that you can learn which language servers are available and how to install them.
@@ -788,7 +806,6 @@ There are a number of other language servers for Python so if you find that =pyl
 #+end_src
 
 You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =pyvenv-activate= command should configure Emacs to cause =lsp-mode= and =dap-mode= to use the virtual environment when they are loaded, just select the path to your virtual environment before loading your project.
-(autoload 'go-mode "go-mode" nil t)
 
 #+begin_src emacs-lisp
 
@@ -799,8 +816,10 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
 
 #+end_src
 
-*** Golang 
-***** go-mode
+*** Golang
+
+**** go-mode
+
 #+BEGIN_SRC emacs-lisp
   (use-package go-mode
     :init
@@ -810,30 +829,52 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
       (setq gofmt-command "goimports")
       (local-set-key (kbd "M-.") 'godef-jump)))
 #+END_SRC
-***** go-eldoc
-#+BEGIN_SRC emacs-lisp
-  (use-package go-eldoc
-    :init
-    (progn
-      (go-eldoc-setup)))
-#+END_SRC
-***** autocomplete
-#+BEGIN_SRC emacs-lisp
-  (use-package go-autocomplete
-    :require (auto-complete auto-complete-config)
-    :config
-    (progn
-      (ac-config-default)
-      (setq ac-auto-start 3)
-    ))
-#+END_SRC
-***** go-lint
-#+BEGIN_SRC emacs-lisp
-  (use-package golint
-    :init
-    (add-to-list 'load-path
-        (concat (getenv "GOPATH") "/src/github.com/golang/lint/misc/emacs")))
-#+END_SRC
+
+**** setup go-hook
+
+#+begin_src emacs-lisp
+
+(defun my-go-mode-hook ()
+      (setq tab-width 2 indent-tabs-mode 1)
+      ; eldoc shows the signature of the function at point in the status bar.
+      (go-eldoc-setup)
+      (set (make-local-variable 'company-backends) '(company-go))
+      ; extra keybindings from https://github.com/bbatsov/prelude/blob/master/modules/prelude-go.el
+      (let ((map go-mode-map))
+        (define-key map (kbd "C-c a") 'go-test-current-project) ;; current package, really
+        (define-key map (kbd "C-c m") 'go-test-current-file)
+        (define-key map (kbd "C-c .") 'go-test-current-test)
+        (define-key map (kbd "C-c b") 'go-run)))
+(add-hook 'go-mode-hook 'my-go-mode-hook)
+
+#+end_src
+
+**** Go test and compile
+
+#+begin_src emacs-lisp
+; gotest defines a better set of error regexps for go tests, but it only
+; enables them when using its own functions. Add them globally for use in
+(require 'compile)
+(require 'gotest)
+(dolist (elt go-test-compilation-error-regexp-alist-alist)
+  (add-to-list 'compilation-error-regexp-alist-alist elt))
+(defun prepend-go-compilation-regexps ()
+  (dolist (elt (reverse go-test-compilation-error-regexp-alist))
+    (add-to-list 'compilation-error-regexp-alist elt t)))
+(add-hook 'go-mode-hook 'prepend-go-compilation-regexps)
+#+end_src
+
+run M-x go-projectile-install-tools (one time only, although I think it would be harmless to put this in .emacs if you don't mind the extra startup time). From time to time you may need to run M-x go-projectile-update-tools.
+
+I'm still learning all the features of this setup, but the key ones to me are:
+
+Automatic per-project GOPATH (I don't even set a global $GOPATH anymore)
+go-projectile manages its own tools so they don't interact with your regular paths
+projectile-test-project always runs from the repo root so you can use "make test" from any directory
+I use godef-jump (M-.) all the time
+Flycheck runs golint, go vet, and errcheck automatically. Note that it's missing some of the exceptions we maintain in our makefile, so it will report some false positives which you can ignore.
+Oracle commands start with C-c C-o. For example, C-c C-o r finds references to the function/variable at point.
+gorename is bound to C-c p w
 
 
 ** Company Mode
@@ -1162,20 +1203,6 @@ Dired is a built-in file manager for Emacs that does some pretty amazing things!
 #+end_src
 
 * Applications
-** Google this
-
-Installation
-
-#+begin_src emacs-lisp
-(google-this-mode 1)
-
-#+end_src
-
-Set global keys
-
-#+begin_src emacs-lisp
-   (global-set-key (kbd "C-x g") 'google-this-mode-submap)
-#+end_src
 ** Some App
 
 This is an example of configuring another non-Emacs application using org-mode.  Not only do we write out the configuration at =.config/some-app/config=, we also compute the value that gets stored in this configuration from the Emacs Lisp block above it.
