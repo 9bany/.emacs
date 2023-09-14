@@ -598,6 +598,14 @@ Young Fingaprint   ;; Replace list hyphen with dot
   ;;(setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
   (setq vterm-max-scrollback 10000))
 
+(dolist (mode '(org-mode-hook
+                  term-mode-hook
+                  vterm-mode-hook
+                  shell-mode-hook
+                 treemacs-mode-hook
+                  eshell-mode-hook))
+    (add-hook mode (lambda() (display-line-numbers-mode 0))))
+
 (when (eq system-type 'windows-nt)
   (setq explicit-shell-file-name "powershell.exe")
   (setq explicit-powershell.exe-args '()))

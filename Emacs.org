@@ -1035,6 +1035,14 @@ Make sure that you have the [[https://github.com/akermu/emacs-libvterm/#requirem
     ;;(setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
     (setq vterm-max-scrollback 10000))
 
+  (dolist (mode '(org-mode-hook
+                    term-mode-hook
+                    vterm-mode-hook
+                    shell-mode-hook
+                   treemacs-mode-hook
+                    eshell-mode-hook))
+      (add-hook mode (lambda() (display-line-numbers-mode 0))))
+
 #+end_src
 
 ** shell-mode
