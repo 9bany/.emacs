@@ -442,7 +442,10 @@ Young Fingaprint   ;; Replace list hyphen with dot
 
 (use-package lsp-mode
   :commands (lsp lsp-deferred)
-  :hook (lsp-mode . efs/lsp-mode-setup)
+  :hook (
+         (lsp-mode . efs/lsp-mode-setup)
+         (sh-mode . lsp)
+   )
   :init
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :config
@@ -467,7 +470,7 @@ Young Fingaprint   ;; Replace list hyphen with dot
   ;; (dap-ui-mode 1)
   :commands dap-debug
   :config
-  ;; Set up Node debugging
+  ;; Set up Node debugginig
   (require 'dap-node)
   (dap-node-setup) ;; Automatically installs Node debug adapter if needed
 
@@ -531,6 +534,8 @@ Young Fingaprint   ;; Replace list hyphen with dot
     (add-to-list 'compilation-error-regexp-alist elt t)))
 (add-hook 'go-mode-hook 'prepend-go-compilation-regexps)
 
+(require 'go-projectile)
+
 (use-package company
   :after lsp-mode
   :hook (lsp-mode . company-mode)
@@ -554,7 +559,7 @@ Young Fingaprint   ;; Replace list hyphen with dot
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
   (when (file-directory-p "~/Documents")
-    (setq projectile-project-search-path '("~/Documents" "~/go/src/github.com")))
+    (setq projectile-project-search-path '("~/Documents" "~/go/src/github.com" "~/Documents/9bany")))
 
   (setq projectile-switch-project-action #'projectile-dired))
 

@@ -173,10 +173,11 @@ I am using the [[https://github.com/microsoft/monaco-editor][Manoco]] and [[http
 
 #+begin_src emacs-lisp
 
-(global-set-key (kbd "s-r") 'writeroom-mode)
-(setq writeroom-fullscreen-effect 'maximized)
+  (global-set-key (kbd "s-r") 'writeroom-mode)
+  (setq writeroom-fullscreen-effect 'maximized)
 
-(setq writeroom-mode-line t)
+  (setq writeroom-mode-line t)
+
 #+end_src
 
 * Keybinding Configuration
@@ -679,7 +680,10 @@ The =which-key= integration adds helpful descriptions of the various keys so you
 
   (use-package lsp-mode
     :commands (lsp lsp-deferred)
-    :hook (lsp-mode . efs/lsp-mode-setup)
+    :hook (
+           (lsp-mode . efs/lsp-mode-setup)
+           (sh-mode . lsp)
+     )
     :init
     (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
     :config
@@ -749,7 +753,7 @@ Try these commands with =M-x=:
     ;; (dap-ui-mode 1)
     :commands dap-debug
     :config
-    ;; Set up Node debugging
+    ;; Set up Node debugginig
     (require 'dap-node)
     (dap-node-setup) ;; Automatically installs Node debug adapter if needed
 
@@ -827,7 +831,6 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
 #+end_src
 
 *** Golang
-
 **** go-mode
 
 #+BEGIN_SRC emacs-lisp
@@ -872,6 +875,12 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
   (dolist (elt (reverse go-test-compilation-error-regexp-alist))
     (add-to-list 'compilation-error-regexp-alist elt t)))
 (add-hook 'go-mode-hook 'prepend-go-compilation-regexps)
+#+end_src
+
+**** go projectile
+
+#+begin_src emacs-lisp
+(require 'go-projectile)
 #+end_src
 
 run M-x go-projectile-install-tools (one time only, although I think it would be harmless to put this in .emacs if you don't mind the extra startup time). From time to time you may need to run M-x go-projectile-update-tools.
@@ -926,7 +935,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
     :init
     ;; NOTE: Set this to the folder where you keep your Git repos!
     (when (file-directory-p "~/Documents")
-      (setq projectile-project-search-path '("~/Documents" "~/go/src/github.com")))
+      (setq projectile-project-search-path '("~/Documents" "~/go/src/github.com" "~/Documents/9bany")))
     
     (setq projectile-switch-project-action #'projectile-dired))
 
