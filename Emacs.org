@@ -1,4 +1,4 @@
-#+title: Emacs From Scratch Configuration
++title: Emacs From Scratch Configuration
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
 * Welcome!
