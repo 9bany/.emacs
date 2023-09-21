@@ -381,6 +381,11 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 #+end_src
 
+* Editor Configuration
+** Disable create backup file
+#+begin_src emacs-lisp
+  (setq make-backup-files nil)
+#+end_src
 * Org Mode
 
 [[https://orgmode.org/][Org Mode]] is one of the hallmark features of Emacs.  It is a rich document editor, project planner, task and time tracker, blogging engine, and literate coding utility all wrapped up in one package.

@@ -224,6 +224,8 @@
 (efs/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
+(setq make-backup-files nil)
+
 (defun efs/org-font-setup ()
 Young Fingaprint   ;; Replace list hyphen with dot
    (font-lock-add-keywords 'org-mode
