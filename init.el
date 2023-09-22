@@ -2,8 +2,8 @@
 ;;       in Emacs and init.el will be generated automatically!
 
 ;; You will most likely need to adjust this font size for your system!
-(defvar efs/default-font-size 180)
-(defvar efs/default-variable-font-size 180)
+(defvar efs/default-font-size 140)
+(defvar efs/default-variable-font-size 140)
 
 ;; Make frame transparency overridable
 ;;(defvar efs/frame-transparency '(90 . 90))
@@ -71,7 +71,7 @@
 (setq visible-bell t)
 
 (column-number-mode)
-(global-display-line-numbers-mode t)
+(global-display-line-numbers-mode 0)
 
 ;; Set frame transparency
 ;;(set-frame-parameter (selected-frame) 'alpha efs/frame-transparency)
@@ -102,6 +102,7 @@
 (setq writeroom-fullscreen-effect 'maximized)
 
 (setq writeroom-mode-line t)
+(setq writeroom-width 120)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
