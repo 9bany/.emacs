@@ -559,7 +559,7 @@ Young Fingaprint   ;; Replace list hyphen with dot
   :init
   ;; NOTE: Set this to the folder where you keep your Git repos!
   (when (file-directory-p "~/Documents")
-    (setq projectile-project-search-path '("~/Documents" "~/go/src/github.com" "~/Documents/9bany")))
+    (setq projectile-project-search-path '("~/Documents" "~/go/src/github.com" "~/Documents/9bany" "~/Documents/office")))
 
   (setq projectile-switch-project-action #'projectile-dired))
 
@@ -677,3 +677,16 @@ Young Fingaprint   ;; Replace list hyphen with dot
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(exwm writeroom-mode which-key vterm typescript-mode rainbow-delimiters pyvenv python-mode org-bullets no-littering lsp-ui lsp-ivy ivy-rich ivy-prescient helpful gotest go-projectile go-autocomplete general forge flycheck exec-path-from-shell evil-nerd-commenter evil-collection eterm-256color eshell-git-prompt doom-themes doom-modeline dired-single dired-open dired-hide-dotfiles dap-mode counsel-projectile company-box command-log-mode auto-package-update all-the-icons-nerd-fonts all-the-icons-dired)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

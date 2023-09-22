@@ -899,6 +899,8 @@ Oracle commands start with C-c C-o. For example, C-c C-o r finds references to t
 gorename is bound to C-c p w
 
 
+
+
 ** Company Mode
 
 [[http://company-mode.github.io/][Company Mode]] provides a nicer in-buffer completion interface than =completion-at-point= which is more reminiscent of what you would expect from an IDE.  We add a simple configuration to make the keybindings a little more useful (=TAB= now completes the selection and initiates completion at the current location if needed).
@@ -938,7 +940,7 @@ We also use [[https://github.com/sebastiencs/company-box][company-box]] to furth
     :init
     ;; NOTE: Set this to the folder where you keep your Git repos!
     (when (file-directory-p "~/Documents")
-      (setq projectile-project-search-path '("~/Documents" "~/go/src/github.com" "~/Documents/9bany")))
+      (setq projectile-project-search-path '("~/Documents" "~/go/src/github.com" "~/Documents/9bany" "~/Documents/office")))
     
     (setq projectile-switch-project-action #'projectile-dired))
 
