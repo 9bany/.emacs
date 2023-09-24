@@ -229,7 +229,10 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 #+end_src
 
 * UI Configuration
-
+** Transpose-frame
+#+begin_src emacs-lisp
+(require 'transpose-frame)
+#+end_src
 ** Command Log Mode
 
 [[https://github.com/lewang/command-log-mode][command-log-mode]] is useful for displaying a panel showing each key binding you use in a panel on the right side of the frame.  Great for live streams and screencasts!
@@ -247,9 +250,11 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+begin_src emacs-lisp
 
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+  ;;(load-theme 'tokyo-city t)
   ;; list theme i'm using in my config: palenight, dracula
-  (use-package doom-themes
-    :init (load-theme 'doom-dracula t))
+   (use-package doom-themes
+   :init (load-theme 'doom-palenight t))
 
 #+end_src
 
@@ -382,11 +387,12 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
 #+end_src
 
-* Windown management (exwm)
+* Window management (exwm)
 ** Setup exwm
 #+begin_src emacs-lisp
-(require 'exwm)
-(require 'exwm-config)
+  (require 'exwm)
+  (require 'exwm-config)
+  ;; enable exwm
 #+end_src
 * Editor Configuration
 ** Disable create backup file
@@ -857,18 +863,19 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
 
 #+begin_src emacs-lisp
 
-(defun my-go-mode-hook ()
-      (setq tab-width 2 indent-tabs-mode 1)
-      ; eldoc shows the signature of the function at point in the status bar.
-      (go-eldoc-setup)
-      (set (make-local-variable 'company-backends) '(company-go))
-      ; extra keybindings from https://github.com/bbatsov/prelude/blob/master/modules/prelude-go.el
-      (let ((map go-mode-map))
-        (define-key map (kbd "C-c a") 'go-test-current-project) ;; current package, really
-        (define-key map (kbd "C-c m") 'go-test-current-file)
-        (define-key map (kbd "C-c .") 'go-test-current-test)
-        (define-key map (kbd "C-c b") 'go-run)))
-(add-hook 'go-mode-hook 'my-go-mode-hook)
+  (defun my-go-mode-hook ()
+	(setq tab-width 2 indent-tabs-mode 1)
+	; eldoc shows the signature of the function at point in the status bar.
+	(go-eldoc-setup)
+        (hs-minor-mode)
+	(set (make-local-variable 'company-backends) '(company-go))
+	; extra keybindings from https://github.com/bbatsov/prelude/blob/master/modules/prelude-go.el
+	(let ((map go-mode-map))
+	  (define-key map (kbd "C-c a") 'go-test-current-project) ;; current package, really
+	  (define-key map (kbd "C-c m") 'go-test-current-file)
+	  (define-key map (kbd "C-c .") 'go-test-current-test)
+	  (define-key map (kbd "C-c b") 'go-run)))
+  (add-hook 'go-mode-hook 'my-go-mode-hook)
 
 #+end_src
 
@@ -1142,7 +1149,6 @@ For more thoughts on Eshell, check out these articles by Pierre Neidhardt:
 #+end_src
 
 * File Management
-
 ** Dired
 
 Dired is a built-in file manager for Emacs that does some pretty amazing things!  Here are some key bindings you should try out:

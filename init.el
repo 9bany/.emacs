@@ -143,12 +143,16 @@
   :config
   (evil-collection-init))
 
+(require 'transpose-frame)
+
 (use-package command-log-mode
   :commands command-log-mode)
 
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+;;(load-theme 'tokyo-city t)
 ;; list theme i'm using in my config: palenight, dracula
-(use-package doom-themes
-  :init (load-theme 'doom-dracula t))
+ (use-package doom-themes
+ :init (load-theme 'doom-palenight t))
 
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
@@ -227,6 +231,7 @@
 
 (require 'exwm)
 (require 'exwm-config)
+;; enable exwm
 
 (setq make-backup-files nil)
 
@@ -518,13 +523,14 @@ Young Fingaprint   ;; Replace list hyphen with dot
       (setq tab-width 2 indent-tabs-mode 1)
       ; eldoc shows the signature of the function at point in the status bar.
       (go-eldoc-setup)
+      (hs-minor-mode)
       (set (make-local-variable 'company-backends) '(company-go))
       ; extra keybindings from https://github.com/bbatsov/prelude/blob/master/modules/prelude-go.el
       (let ((map go-mode-map))
-        (define-key map (kbd "C-c a") 'go-test-current-project) ;; current package, really
-        (define-key map (kbd "C-c m") 'go-test-current-file)
-        (define-key map (kbd "C-c .") 'go-test-current-test)
-        (define-key map (kbd "C-c b") 'go-run)))
+	(define-key map (kbd "C-c a") 'go-test-current-project) ;; current package, really
+	(define-key map (kbd "C-c m") 'go-test-current-file)
+	(define-key map (kbd "C-c .") 'go-test-current-test)
+	(define-key map (kbd "C-c b") 'go-run)))
 (add-hook 'go-mode-hook 'my-go-mode-hook)
 
 ; gotest defines a better set of error regexps for go tests, but it only
