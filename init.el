@@ -102,7 +102,7 @@
 (setq writeroom-fullscreen-effect 'maximized)
 
 (setq writeroom-mode-line t)
-(setq writeroom-width 120)
+(setq writeroom-width 100)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -142,6 +142,8 @@
   :after evil
   :config
   (evil-collection-init))
+
+(global-set-key (kbd "C-s-w t") 'transpose-frame)
 
 (require 'transpose-frame)
 

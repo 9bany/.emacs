@@ -170,14 +170,13 @@ I am using the [[https://github.com/microsoft/monaco-editor][Manoco]] and [[http
 #+end_src
 
 ** Writing room
-
 #+begin_src emacs-lisp
 
   (global-set-key (kbd "s-r") 'writeroom-mode)
   (setq writeroom-fullscreen-effect 'maximized)
 
   (setq writeroom-mode-line t)
-  (setq writeroom-width 120)
+  (setq writeroom-width 100)
 
 #+end_src
 
@@ -226,6 +225,11 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
     :config
     (evil-collection-init))
 
+#+end_src
+
+** Window transpose-frame
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-s-w t") 'transpose-frame)
 #+end_src
 
 * UI Configuration
@@ -857,6 +861,7 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
       (setq compile-command "go build -v && go test -v  && go vet && golint")
       (setq gofmt-command "goimports")
       (local-set-key (kbd "M-.") 'godef-jump)))
+
 #+END_SRC
 
 **** setup go-hook
@@ -911,8 +916,6 @@ I use godef-jump (M-.) all the time
 Flycheck runs golint, go vet, and errcheck automatically. Note that it's missing some of the exceptions we maintain in our makefile, so it will report some false positives which you can ignore.
 Oracle commands start with C-c C-o. For example, C-c C-o r finds references to the function/variable at point.
 gorename is bound to C-c p w
-
-
 
 
 ** Company Mode
