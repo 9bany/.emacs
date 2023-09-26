@@ -143,7 +143,8 @@
   :config
   (evil-collection-init))
 
-(global-set-key (kbd "C-s-w t") 'transpose-frame)
+(global-set-key (kbd "C-c j g d") 'godef-jump-other-window)
+(global-set-key (kbd "C-c j w") 'transpose-frame)
 
 (require 'transpose-frame)
 

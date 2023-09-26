@@ -229,7 +229,8 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 ** Window transpose-frame
 #+begin_src emacs-lisp
-  (global-set-key (kbd "C-s-w t") 'transpose-frame)
+  (global-set-key (kbd "C-c j g d") 'godef-jump-other-window)
+  (global-set-key (kbd "C-c j w") 'transpose-frame)
 #+end_src
 
 * UI Configuration
