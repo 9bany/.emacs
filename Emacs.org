@@ -918,6 +918,16 @@ Flycheck runs golint, go vet, and errcheck automatically. Note that it's missing
 Oracle commands start with C-c C-o. For example, C-c C-o r finds references to the function/variable at point.
 gorename is bound to C-c p w
 
+*** Protoc
+#+begin_src emacs-lisp
+  (require 'protobuf-mode)
+  (defconst my-protobuf-style
+     '((c-basic-offset . 2)
+       (indent-tabs-mode . nil)))
+
+   (add-hook 'protobuf-mode-hook
+     (lambda () (c-add-style "my-style" my-protobuf-style t)))
+#+end_src
 
 ** Company Mode
 

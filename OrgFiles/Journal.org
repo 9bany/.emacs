@@ -13,3 +13,24 @@ CLOCK: [2020-10-09 Fri 10:08]--[2020-10-09 Fri 10:08] =>  0:00
 
 Today was a great day!  We learned more about Org Mode.
 
+* 2023
+** 2023-09 September
+*** 2023-09-26 Tuesday
+
+**** 10:43 AM - Journal                                             :journal:
+:LOGBOOK:
+CLOCK: [2023-09-26 Tue 10:43]--[2023-09-26 Tue 10:44] =>  0:01
+:END:
+
+**** 10:44 AM - Journal                                             :journal:
+:LOGBOOK:
+CLOCK: [2023-09-26 Tue 10:44]--[2023-09-26 Tue 10:44] =>  0:00
+:END:
+
+**** 10:44 AM - Journal                                             :journal:
+:LOGBOOK:
+CLOCK: [2023-09-26 Tue 10:44]--[2023-09-26 Tue 10:44] =>  0:00
+:END:
+
+
+
