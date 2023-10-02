@@ -8,6 +8,12 @@
 ;; Make frame transparency overridable
 ;;(defvar efs/frame-transparency '(90 . 90))
 
+;; use-package with package.el:
+(use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook))
+
 ;; The default is 800 kilobytes.  Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
 
@@ -143,8 +149,15 @@
   :config
   (evil-collection-init))
 
-(global-set-key (kbd "C-c j g d") 'godef-jump-other-window)
-(global-set-key (kbd "C-c j w") 'transpose-frame)
+(defun reload-projectile-discovery()
+  (projectile-clear-known-projects)
+  (projectile-cleanup-known-projects)
+  (projectile-discover-projects-in-search-path)
+  )
+(global-set-key (kbd "C-c b p") (lambda () (interactive) (reload-projectile-discovery)))
+
+(global-set-key (kbd "C-c b g d") 'godef-jump-other-window)
+(global-set-key (kbd "C-c b w") 'transpose-frame)
 
 (require 'transpose-frame)
 
@@ -169,36 +182,37 @@
   (setq which-key-idle-delay 1))
 
 (use-package ivy
-  :diminish
-  :bind (("C-s" . swiper)
-         :map ivy-minibuffer-map
-         ("TAB" . ivy-alt-done)
-         ("C-l" . ivy-alt-done)
-         ("C-j" . ivy-next-line)
-         ("C-k" . ivy-previous-line)
-         :map ivy-switch-buffer-map
-         ("C-k" . ivy-previous-line)
-         ("C-l" . ivy-done)
-         ("C-d" . ivy-switch-buffer-kill)
-         :map ivy-reverse-i-search-map
-         ("C-k" . ivy-previous-line)
-         ("C-d" . ivy-reverse-i-search-kill))
-  :config
-  (ivy-mode 1))
+    :diminish
+    :bind (("C-s" . swiper)
+           :map ivy-minibuffer-map
+           ("TAB" . ivy-alt-done)
+           ("C-l" . ivy-alt-done)
+           ("C-j" . ivy-next-line)
+           ("C-k" . ivy-previous-line)
+           :map ivy-switch-buffer-map
+           ("C-k" . ivy-previous-line)
+           ("C-l" . ivy-done)
+           ("C-d" . ivy-switch-buffer-kill)
+           :map ivy-reverse-i-search-map
+           ("C-k" . ivy-previous-line)
+           ("C-d" . ivy-reverse-i-search-kill))
+    :config
+    (ivy-mode 1))
 
-(use-package ivy-rich
-  :after ivy
-  :init
-  (ivy-rich-mode 1))
+  (use-package ivy-rich
+    :after ivy
+    :init
+    (ivy-rich-mode 1))
 
-(use-package counsel
-  :bind (("C-M-j" . 'counsel-switch-buffer)
-         :map minibuffer-local-map
-         ("C-r" . 'counsel-minibuffer-history))
-  :custom
-  (counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
-  :config
-  (counsel-mode 1))
+  (use-package counsel
+    :bind (("C-M-j" . 'counsel-switch-buffer)
+           :map minibuffer-local-map
+           ("C-r" . 'counsel-minibuffer-history))
+    :custom
+
+(counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
+    :config
+    (counsel-mode 1))
 
 (use-package ivy-prescient
   :after counsel
@@ -239,7 +253,7 @@
 (setq make-backup-files nil)
 
 (defun efs/org-font-setup ()
-Young Fingaprint   ;; Replace list hyphen with dot
+;; Replace list hyphen with dot
    (font-lock-add-keywords 'org-mode
                            '(("^ *\\([-]\\) "
                               (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
@@ -523,7 +537,7 @@ Young Fingaprint   ;; Replace list hyphen with dot
     (local-set-key (kbd "M-.") 'godef-jump)))
 
 (defun my-go-mode-hook ()
-      (setq tab-width 2 indent-tabs-mode 1)
+      (setq tab-width 4 indent-tabs-mode 3)
       ; eldoc shows the signature of the function at point in the status bar.
       (go-eldoc-setup)
       (hs-minor-mode)
@@ -698,3 +712,6 @@ Young Fingaprint   ;; Replace list hyphen with dot
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
+
+(load-file "~/.emacs.d/gc-buffers.el")
+(gc-buffers-mode)

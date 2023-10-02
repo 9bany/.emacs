@@ -1,4 +1,4 @@
-+title: Emacs From Scratch Configuration
+title: Emacs From Scratch Configuration
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
 * Welcome!
@@ -20,6 +20,17 @@ The following variables are used to tweak some of the configuration pieces for u
 
   ;; Make frame transparency overridable
   ;;(defvar efs/frame-transparency '(90 . 90))
+
+#+end_src
+
+
+** Welcome board
+#+begin_src emacs-lisp
+  ;; use-package with package.el:
+  (use-package dashboard
+    :ensure t
+    :config
+    (dashboard-setup-startup-hook))
 
 #+end_src
 
@@ -227,10 +238,20 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
 #+end_src
 
+** Projectile
+#+begin_src emacs-lisp
+  (defun reload-projectile-discovery()
+    (projectile-clear-known-projects)
+    (projectile-cleanup-known-projects)
+    (projectile-discover-projects-in-search-path)
+    )
+  (global-set-key (kbd "C-c b p") (lambda () (interactive) (reload-projectile-discovery)))
+#+end_src
+
 ** Window transpose-frame
 #+begin_src emacs-lisp
-  (global-set-key (kbd "C-c j g d") 'godef-jump-other-window)
-  (global-set-key (kbd "C-c j w") 'transpose-frame)
+  (global-set-key (kbd "C-c b g d") 'godef-jump-other-window)
+  (global-set-key (kbd "C-c b w") 'transpose-frame)
 #+end_src
 
 * UI Configuration
@@ -328,7 +349,8 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
            :map minibuffer-local-map
            ("C-r" . 'counsel-minibuffer-history))
     :custom
-    (counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
+
+(counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
     :config
     (counsel-mode 1))
 
@@ -415,7 +437,7 @@ The =efs/org-font-setup= function configures various text faces to tweak the siz
 #+begin_src emacs-lisp
 
   (defun efs/org-font-setup ()
- Young Fingaprint   ;; Replace list hyphen with dot
+ ;; Replace list hyphen with dot
     (font-lock-add-keywords 'org-mode
                             '(("^ *\\([-]\\) "
                                (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
@@ -870,7 +892,7 @@ You can use the pyvenv package to use =virtualenv= environments in Emacs.  The =
 #+begin_src emacs-lisp
 
   (defun my-go-mode-hook ()
-	(setq tab-width 2 indent-tabs-mode 1)
+	(setq tab-width 4 indent-tabs-mode 3)
 	; eldoc shows the signature of the function at point in the status bar.
 	(go-eldoc-setup)
         (hs-minor-mode)
@@ -1290,4 +1312,11 @@ Dial the GC threshold back down so that garbage collection happens more frequent
   ;; Make gc pauses faster by decreasing the threshold.
   (setq gc-cons-threshold (* 2 1000 1000))
 
+#+end_src
+
+** GC buffers
+
+#+begin_src emacs-lisp
+  (load-file "~/.emacs.d/gc-buffers.el")
+  (gc-buffers-mode)
 #+end_src
